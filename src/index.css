@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --color-harper-beige: #F6E1CE;
+  --color-harper-cream: #FFF8F0;
+  --color-harper-teal: #1D3A47;
+  --color-harper-teal-mid: #295264;
+  --color-harper-coral: #FF6D63;
+  --color-harper-green: #2A7A6E;
+  --color-harper-green-light: #4ADE80;
+  --color-harper-muted: #A89B8C;
+  --color-harper-warning: #F59E0B;
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-accent: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #F6E1CE;
+  color: #1D3A47;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
