@@ -26,9 +26,10 @@ const taskIcons: Record<string, string> = {
 interface TaskCardProps {
   task: TaskInstance
   onClick: () => void
+  showHint?: boolean
 }
 
-export function TaskCard({ task, onClick }: TaskCardProps) {
+export function TaskCard({ task, onClick, showHint = false }: TaskCardProps) {
   if (task.expired) {
     return (
       <motion.div
@@ -53,19 +54,34 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
     <motion.button
       layout
       initial={{ opacity: 0, x: -16, scale: 0.97 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
+      animate={showHint ? {
+        opacity: 1,
+        x: 0,
+        scale: [1, 1.03, 1],
+        boxShadow: [
+          '0 0 0 0 rgba(212, 175, 55, 0)',
+          '0 0 0 8px rgba(212, 175, 55, 0.3)',
+          '0 0 0 0 rgba(212, 175, 55, 0)'
+        ]
+      } : { opacity: 1, x: 0, scale: 1 }}
+      transition={showHint ? {
+        scale: { repeat: Infinity, duration: 2, ease: 'easeInOut' },
+        boxShadow: { repeat: Infinity, duration: 2, ease: 'easeInOut' }
+      } : undefined}
       whileHover={{ scale: 1.02, y: -1 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       data-testid={`task-card-${task.id}`}
-      className={`w-full text-left rounded-xl p-3 transition-all cursor-pointer
-        ${task.isGold
-          ? 'gold-glow'
-          : task.harperAssisted
-            ? 'card-elevated border-emerald/30'
-            : isUrgent
-              ? 'card-elevated pulse-urgent'
-              : 'card-elevated border-slate-600/50'
+      className={`w-full text-left rounded-xl p-3 transition-all cursor-pointer relative
+        ${showHint
+          ? 'card-elevated border-gold ring-2 ring-gold/40'
+          : task.isGold
+            ? 'gold-glow'
+            : task.harperAssisted
+              ? 'card-elevated border-emerald/30'
+              : isUrgent
+                ? 'card-elevated pulse-urgent'
+                : 'card-elevated border-slate-600/50'
         }
       `}
     >
@@ -114,6 +130,20 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
           transition={{ duration: 0.5 }}
         />
       </div>
+
+      {/* First task hint */}
+      {showHint && (
+        <motion.div
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap
+                     bg-gold text-midnight text-[10px] font-semibold px-2.5 py-1 rounded-full
+                     pointer-events-none shadow-lg"
+        >
+          ← Click to start
+        </motion.div>
+      )}
     </motion.button>
   )
 }

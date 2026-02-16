@@ -4,9 +4,13 @@ import { TaskCard } from './TaskCard'
 export function TaskQueue() {
   const taskQueue = useGameStore((s) => s.taskQueue)
   const selectTask = useGameStore((s) => s.selectTask)
+  const tasksCompleted = useGameStore((s) => s.tasksCompleted)
 
   const activeTasks = taskQueue.filter(t => !t.expired && !t.completed)
   const expiredTasks = taskQueue.filter(t => t.expired)
+
+  // Show hint on first task if player hasn't completed any tasks yet
+  const showFirstTaskHint = tasksCompleted === 0 && activeTasks.length > 0
 
   return (
     <div className="w-72 bg-gradient-to-b from-slate-800 to-slate-800/80 border-r border-slate-700/50 flex flex-col shrink-0">
@@ -35,11 +39,12 @@ export function TaskQueue() {
           </div>
         )}
 
-        {activeTasks.map(task => (
+        {activeTasks.map((task, index) => (
           <TaskCard
             key={task.id}
             task={task}
             onClick={() => selectTask(task.id)}
+            showHint={showFirstTaskHint && index === 0}
           />
         ))}
 

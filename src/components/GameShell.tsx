@@ -174,9 +174,9 @@ export function GameShell() {
         onDismiss={handleDismissWelcome}
         category="YOUR DAY"
         headline="You have 9 hours and 20 clients."
-        body="Most insurance brokers spend 57% of their time on admin work. You're about to feel why."
-        bodySecondary="Tasks appear on the left. Click to start. Complete before the timer runs out, or the client walks."
-        dismissText="Let's go"
+        body="You're a commercial insurance broker. Emails are flooding in. Clients need certificates. Underwriters want forms filled out. Renewals are coming due. Most brokers spend 57% of their time on this admin work — you're about to feel why."
+        bodySecondary="Tasks appear in your inbox on the left as emails arrive, clients call, and deadlines approach. Click a task to start. Complete it before the timer runs out, or the client walks."
+        dismissText="Start my day"
       />
 
       {/* Welcome Card 2: Pre-Harper Stats */}
