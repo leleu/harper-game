@@ -15,10 +15,15 @@ export function Workspace() {
 
   if (!activeTask) {
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center noise-bg">
         <div className="text-center">
-          <p className="text-harper-muted text-lg">Select a task from the queue</p>
-          <p className="text-harper-muted/60 text-sm mt-1">Click a card on the left to begin</p>
+          <div className="w-12 h-12 rounded-full bg-slate-700/40 flex items-center justify-center mx-auto mb-4">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-mist/40">
+              <path d="M3 5h14M3 10h14M3 15h10" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <p className="text-mist/60 text-sm font-medium">Select a task from the inbox</p>
+          <p className="text-mist/30 text-xs mt-1">Click a card on the left to begin</p>
         </div>
       </div>
     )
@@ -46,8 +51,8 @@ export function Workspace() {
     default:
       return (
         <div className="flex-1 flex items-center justify-center p-6">
-          <div className="bg-white rounded-xl shadow-sm border border-harper-muted/20 p-8 max-w-2xl w-full">
-            <p className="text-harper-teal font-semibold">
+          <div className="card-elevated rounded-xl p-8 max-w-2xl w-full">
+            <p className="text-pearl font-semibold">
               Active: {activeTask.type} — {activeTask.clientName}
             </p>
           </div>

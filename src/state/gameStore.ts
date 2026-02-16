@@ -46,6 +46,12 @@ interface GameState {
   gameTimeMinutes: number // 0 = 8AM, 540 = 5PM
   realTimeElapsed: number // seconds since game started
   isRunning: boolean
+  isPaused: boolean
+  speedMultiplier: number
+
+  // Welcome cards & UI state
+  shownWelcomeCards: Set<string>
+  showPauseScreen: boolean
 
   // Task management
   taskQueue: TaskInstance[]
@@ -76,6 +82,10 @@ interface GameState {
   startGame: () => void
   setScreen: (screen: 'start' | 'game' | 'end') => void
   setGamePhase: (phase: GamePhase) => void
+  setPaused: (paused: boolean) => void
+  setShowPauseScreen: (show: boolean) => void
+  markWelcomeCardShown: (cardId: string) => void
+  hasShownWelcomeCard: (cardId: string) => boolean
   tick: (deltaSeconds: number) => void
   addTask: (task: TaskInstance) => void
   selectTask: (taskId: string) => void
@@ -86,7 +96,9 @@ interface GameState {
   unlockTool: (tool: string) => void
   toggleSound: () => void
   endGame: () => void
+  setSpeedMultiplier: (multiplier: number) => void
   resetGame: () => void
+  skipToPhase: (phase: GamePhase) => void // debug mode
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -95,6 +107,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   gameTimeMinutes: 0,
   realTimeElapsed: 0,
   isRunning: false,
+  isPaused: false,
+  speedMultiplier: 1,
+
+  shownWelcomeCards: new Set(),
+  showPauseScreen: false,
 
   taskQueue: [],
   activeTask: null,
@@ -122,6 +139,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     gameTimeMinutes: 0,
     realTimeElapsed: 0,
     isRunning: true,
+    speedMultiplier: 1,
     taskQueue: [],
     activeTask: null,
     revenue: 0,
@@ -140,12 +158,23 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setScreen: (screen) => set({ screen }),
   setGamePhase: (gamePhase) => set({ gamePhase }),
+  setPaused: (paused) => set({ isPaused: paused }),
+  setShowPauseScreen: (show) => set({ showPauseScreen: show, isPaused: show }),
+
+  markWelcomeCardShown: (cardId) => set((state) => {
+    const newSet = new Set(state.shownWelcomeCards)
+    newSet.add(cardId)
+    return { shownWelcomeCards: newSet }
+  }),
+
+  hasShownWelcomeCard: (cardId) => get().shownWelcomeCards.has(cardId),
 
   tick: (deltaSeconds) => {
     const state = get()
-    if (!state.isRunning) return
+    if (!state.isRunning || state.isPaused) return
 
-    const newRealTime = state.realTimeElapsed + deltaSeconds
+    const adjustedDelta = deltaSeconds * state.speedMultiplier
+    const newRealTime = state.realTimeElapsed + adjustedDelta
     // 600 real seconds = 540 game minutes (8AM to 5PM)
     const gameMinutesPerRealSecond = 540 / 600
     const newGameTime = newRealTime * gameMinutesPerRealSecond
@@ -153,7 +182,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Update task deadlines
     const updatedQueue = state.taskQueue.map(task => ({
       ...task,
-      deadline: Math.max(0, task.deadline - deltaSeconds),
+      deadline: Math.max(0, task.deadline - adjustedDelta),
     }))
 
     // Track time for active task
@@ -162,9 +191,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     let sellingDelta = 0
     if (activeTask) {
       if (activeTask.isGold) {
-        sellingDelta = deltaSeconds
+        sellingDelta = adjustedDelta
       } else {
-        adminDelta = deltaSeconds
+        adminDelta = adjustedDelta
       }
     }
 
@@ -252,6 +281,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     unlockedTools: [...state.unlockedTools, tool],
   })),
 
+  setSpeedMultiplier: (multiplier) => set({ speedMultiplier: multiplier }),
+
   toggleSound: () => set((state) => ({ soundEnabled: !state.soundEnabled })),
 
   endGame: () => set({ isRunning: false, screen: 'end' }),
@@ -262,6 +293,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     gameTimeMinutes: 0,
     realTimeElapsed: 0,
     isRunning: false,
+    isPaused: false,
+    speedMultiplier: 1,
+    shownWelcomeCards: new Set(),
+    showPauseScreen: false,
     taskQueue: [],
     activeTask: null,
     revenue: 0,
@@ -277,4 +312,31 @@ export const useGameStore = create<GameState>((set, get) => ({
     unlockedTools: [],
     beforeHarperStats: null,
   }),
+
+  // Debug mode: skip to phase
+  skipToPhase: (phase) => {
+    const state = get()
+    const phaseTimings: Record<GamePhase, number> = {
+      start: 0,
+      tutorial: 0,
+      ramp: 150,
+      overwhelm: 270,
+      harper: 330,
+      mastery: 360,
+      winddown: 500,
+      end: 570,
+    }
+
+    const targetTime = phaseTimings[phase] || 0
+    set({
+      realTimeElapsed: targetTime,
+      gameTimeMinutes: (targetTime * 540) / 600,
+      gamePhase: phase,
+    })
+
+    // Auto-unlock Harper if skipping to harper phase or later
+    if (['harper', 'mastery', 'winddown', 'end'].includes(phase) && !state.harperUnlocked) {
+      get().unlockHarper()
+    }
+  },
 }))

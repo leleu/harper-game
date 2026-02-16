@@ -42,7 +42,7 @@ export function DiscoveryCall() {
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
           >
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
@@ -50,8 +50,8 @@ export function DiscoveryCall() {
               transition={{ type: 'spring', damping: 12 }}
               className={`rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg
                 ${selected !== null && options[selected].correct
-                  ? 'bg-harper-green text-white'
-                  : 'bg-harper-warning text-white'
+                  ? 'bg-emerald text-white'
+                  : 'bg-amber text-white'
                 }
               `}
             >
@@ -62,17 +62,17 @@ export function DiscoveryCall() {
       </AnimatePresence>
 
       <div className="max-w-lg w-full">
-        <div className="bg-white rounded-xl shadow-sm border-2 border-amber-300 p-6">
+        <div className="card-elevated rounded-xl border-2 border-gold/40 p-6">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-lg">⭐</span>
-            <h3 className="text-sm font-semibold text-harper-teal uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gold uppercase tracking-wider">
               Discovery Call — {activeTask?.clientName}
             </h3>
           </div>
 
-          <div className="bg-amber-50 rounded-lg p-4 mb-5">
-            <p className="text-sm text-harper-teal font-medium">{question}</p>
-            <p className="text-xs text-harper-muted mt-1">
+          <div className="bg-slate-700/50 rounded-lg p-4 mb-5 border border-slate-600/30">
+            <p className="text-sm text-pearl font-medium">{question}</p>
+            <p className="text-xs text-mist mt-1">
               {(scenario as Record<string, string>).industry} • {(scenario as Record<string, string>).employees} employees
             </p>
           </div>
@@ -89,23 +89,24 @@ export function DiscoveryCall() {
                   whileTap={!completed ? { scale: 0.99 } : {}}
                   onClick={() => handleSelect(idx)}
                   disabled={selected !== null}
+                  data-testid={`discovery-option-${idx}`}
                   className={`w-full text-left p-3 rounded-lg border-2 transition-all cursor-pointer
                     ${isSelected
                       ? isCorrect
-                        ? 'border-harper-green bg-harper-green/5'
-                        : 'border-harper-coral bg-harper-coral/5'
+                        ? 'border-emerald bg-emerald/5'
+                        : 'border-crimson bg-crimson/5'
                       : selected !== null && isCorrect
-                        ? 'border-harper-green/30 bg-harper-green/5'
+                        ? 'border-emerald/30 bg-emerald/5'
                         : selected !== null
                           ? 'opacity-50'
-                          : 'border-gray-200 bg-gray-50 hover:border-harper-teal/30'
+                          : 'border-slate-600/30 bg-slate-700/30 hover:border-gold/30'
                     }
                   `}
                 >
                   <span className={`text-sm font-medium
                     ${isSelected
-                      ? isCorrect ? 'text-harper-green' : 'text-harper-coral'
-                      : 'text-harper-teal'
+                      ? isCorrect ? 'text-emerald' : 'text-crimson'
+                      : 'text-pearl'
                     }
                   `}>
                     {opt.label}
@@ -125,8 +126,8 @@ export function DiscoveryCall() {
               >
                 <div className={`rounded-lg p-3 text-sm
                   ${options[selected].correct
-                    ? 'bg-harper-green/10 text-harper-green'
-                    : 'bg-harper-coral/10 text-harper-coral'
+                    ? 'bg-emerald/10 text-emerald'
+                    : 'bg-crimson/10 text-crimson'
                   }
                 `}>
                   {options[selected].explanation}

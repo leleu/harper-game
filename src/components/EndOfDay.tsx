@@ -34,7 +34,7 @@ export function EndOfDay() {
   const beforeRevPerHour = (beforeHarperStats?.revenue || 0) / 5.75
   const afterRevPerHour = afterRevenue / 3.25
 
-  const rows: { label: string; before: string; after: string; highlight?: boolean }[] = [
+  const rows: { label: string; before: string; after: string; highlight?: boolean; isKey?: boolean }[] = [
     {
       label: 'Tasks completed',
       before: (beforeHarperStats?.tasksCompleted || 0).toString(),
@@ -66,6 +66,7 @@ export function EndOfDay() {
       before: `$${Math.round(beforeRevPerHour).toLocaleString()}`,
       after: `$${Math.round(afterRevPerHour).toLocaleString()}`,
       highlight: afterRevPerHour > beforeRevPerHour,
+      isKey: true,
     },
     {
       label: 'NPS',
@@ -77,6 +78,7 @@ export function EndOfDay() {
       before: `${Math.round((beforeHarperStats?.adminRatio || 0.7) * 100)}%`,
       after: `${afterAdminRatio}%`,
       highlight: true,
+      isKey: true,
     },
     {
       label: 'Total clicks',
@@ -86,29 +88,54 @@ export function EndOfDay() {
   ]
 
   return (
-    <div className="min-h-screen bg-harper-beige flex items-center justify-center p-6">
+    <div className="min-h-screen noise-bg flex items-center justify-center p-6 relative overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="max-w-2xl w-full"
       >
-        <h2 className="text-3xl font-semibold text-harper-teal text-center mb-2">
-          End of <span className="font-accent italic text-harper-coral">Day</span>
-        </h2>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-center mb-10"
+        >
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+            <div className="w-1 h-1 rounded-full bg-gold/60" />
+            <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+          </div>
+          <h2 className="text-5xl font-bold text-pearl tracking-tight">
+            End of{' '}
+            <span className="font-serif italic text-gold-bright" style={{
+              textShadow: '0 0 30px rgba(212, 175, 55, 0.4)'
+            }}>Day</span>
+          </h2>
+        </motion.div>
 
         {/* Comparison table */}
-        <div className="bg-white rounded-xl shadow-sm border border-harper-muted/20 overflow-hidden mt-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="card-elevated-lg rounded-2xl overflow-hidden"
+        >
           {/* Header */}
-          <div className="grid grid-cols-3 bg-harper-teal text-harper-beige">
-            <div className="p-3 text-xs font-semibold uppercase tracking-wider" />
-            <div className="p-3 text-xs font-semibold uppercase tracking-wider text-center">
-              Before Harper
-              <span className="block text-[10px] text-harper-beige/50 normal-case font-normal">8AM – 1:45PM</span>
+          <div className="grid grid-cols-3 bg-gradient-to-br from-slate-800 to-slate-700 border-b border-gold/20">
+            <div className="p-5" />
+            <div className="p-5 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mist">
+                Before Harper
+              </p>
+              <p className="text-[10px] text-mist/40 mt-1 font-mono">8 AM – 1:45 PM</p>
             </div>
-            <div className="p-3 text-xs font-semibold uppercase tracking-wider text-center">
-              After Harper
-              <span className="block text-[10px] text-harper-beige/50 normal-case font-normal">1:45PM – 5PM</span>
+            <div className="p-5 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold-bright">
+                After Harper
+              </p>
+              <p className="text-[10px] text-gold/50 mt-1 font-mono">1:45 PM – 5 PM</p>
             </div>
           </div>
 
@@ -116,55 +143,92 @@ export function EndOfDay() {
           {rows.map((row, i) => (
             <motion.div
               key={row.label}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8 + i * 0.1 }}
-              className={`grid grid-cols-3 border-t border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-harper-cream/30'}`}
+              transition={{ delay: 0.7 + i * 0.08 }}
+              className={`grid grid-cols-3 border-t ${
+                row.isKey
+                  ? 'border-gold/20 bg-gradient-to-r from-slate-700/40 to-slate-700/20'
+                  : 'border-slate-600/30'
+              }`}
             >
-              <div className="p-3 text-sm text-harper-teal-mid">{row.label}</div>
-              <div className="p-3 text-sm font-mono text-center text-harper-muted">{row.before}</div>
-              <div className={`p-3 text-sm font-mono text-center font-medium ${
-                row.highlight ? 'text-harper-green' : 'text-harper-teal'
-              }`}>
-                {row.after}
+              <div className="px-5 py-3.5 flex items-center">
+                <span className={`text-sm ${row.isKey ? 'font-semibold text-pearl' : 'text-pearl-dim'}`}>
+                  {row.label}
+                </span>
+              </div>
+              <div className="px-5 py-3.5 flex items-center justify-center">
+                <span className="text-sm font-mono text-mist tabular-nums">
+                  {row.before}
+                </span>
+              </div>
+              <div className="px-5 py-3.5 flex items-center justify-center">
+                <span className={`text-sm font-mono font-semibold tabular-nums ${
+                  row.highlight ? 'text-emerald-glow' : 'text-pearl'
+                }`}>
+                  {row.after}
+                </span>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Tagline */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-          className="text-center text-harper-teal-mid mt-6 text-lg"
+          transition={{ delay: 2.2 }}
+          className="text-center text-pearl-dim mt-10 text-xl tracking-tight font-light"
         >
-          Same person. Same day. <span className="font-accent italic text-harper-coral">Different tools.</span>
+          Same person. Same day.{' '}
+          <span className="font-serif italic text-gold-bright">Different tools.</span>
         </motion.p>
 
         {/* CTAs */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2.5 }}
-          className="flex items-center justify-center gap-4 mt-8"
+          transition={{ delay: 2.6 }}
+          className="flex items-center justify-center gap-4 mt-10"
         >
           <a
             href="https://harperinsure.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-harper-teal text-harper-beige px-6 py-2.5 rounded-full font-semibold text-sm
-                       hover:bg-harper-teal-mid transition-colors"
+            data-testid="learn-more-link"
+            className="bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight px-8 py-3.5 rounded-full font-semibold text-sm
+                       transition-all duration-300 cursor-pointer relative overflow-hidden group"
+            style={{
+              boxShadow: `
+                0 0 30px rgba(212, 175, 55, 0.3),
+                0 8px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3)
+              `
+            }}
           >
-            Learn more about Harper
+            <span className="relative z-10">Learn more about Harper</span>
           </a>
           <button
             onClick={() => { resetShownIntros(); resetScenarioIndex(); resetGame() }}
-            className="border-2 border-harper-teal text-harper-teal px-6 py-2.5 rounded-full font-semibold text-sm
-                       hover:bg-harper-teal hover:text-harper-beige transition-colors cursor-pointer"
+            data-testid="play-again-button"
+            className="border-2 border-pearl/20 text-pearl px-8 py-3.5 rounded-full font-semibold text-sm
+                       hover:border-gold hover:bg-gold/10 hover:text-gold-bright
+                       transition-all duration-300 cursor-pointer backdrop-blur-sm"
           >
             Play again
           </button>
+        </motion.div>
+
+        {/* Decorative close */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3 }}
+          className="flex items-center justify-center gap-2 mt-12"
+        >
+          <div className="w-1 h-1 rounded-full bg-gold/40" />
+          <div className="w-12 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+          <div className="w-1 h-1 rounded-full bg-gold/40" />
         </motion.div>
       </motion.div>
     </div>

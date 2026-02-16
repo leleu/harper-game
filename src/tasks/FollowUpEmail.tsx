@@ -45,13 +45,13 @@ export function FollowUpEmail({ harperAssisted = false }: FollowUpEmailProps) {
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
           >
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', damping: 12 }}
-              className="bg-harper-green text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
+              className="bg-emerald text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
             >
               ✓
             </motion.div>
@@ -61,24 +61,24 @@ export function FollowUpEmail({ harperAssisted = false }: FollowUpEmailProps) {
 
       <div className="max-w-lg w-full">
         {/* Context card */}
-        <div className="bg-amber-50 rounded-lg p-3 border border-amber-100 mb-4">
-          <p className="text-xs text-amber-600 font-medium mb-1">Context</p>
-          <p className="text-sm text-amber-900">{context}</p>
+        <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600/30 mb-4">
+          <p className="text-xs text-gold font-medium mb-1">Context</p>
+          <p className="text-sm text-pearl-dim">{context}</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-harper-muted/20 p-6">
+        <div className="card-elevated rounded-xl border border-slate-600/30 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-harper-teal uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gold uppercase tracking-wider">
               Follow-up Email
             </h3>
             {harperAssisted && (
-              <span className="text-xs bg-harper-green/10 text-harper-green px-2 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-emerald/10 text-emerald px-2 py-0.5 rounded-full font-medium">
                 ⚡ Auto-Drafted
               </span>
             )}
           </div>
 
-          <div className="text-sm text-harper-teal-mid leading-relaxed space-y-2">
+          <div className="text-sm text-mist leading-relaxed space-y-2">
             <p>
               Hi{' '}
               <BlankSlot
@@ -86,6 +86,7 @@ export function FollowUpEmail({ harperAssisted = false }: FollowUpEmailProps) {
                 value={clientName}
                 onClick={() => handleBlankClick(0)}
                 harperAssisted={harperAssisted}
+                index={0}
               />
               ,
             </p>
@@ -96,6 +97,7 @@ export function FollowUpEmail({ harperAssisted = false }: FollowUpEmailProps) {
                 value={context}
                 onClick={() => handleBlankClick(1)}
                 harperAssisted={harperAssisted}
+                index={1}
               />
               . We want to make sure everything stays on track for your coverage.
             </p>
@@ -106,6 +108,7 @@ export function FollowUpEmail({ harperAssisted = false }: FollowUpEmailProps) {
                 value={scenario.businessName || 'your business'}
                 onClick={() => handleBlankClick(2)}
                 harperAssisted={harperAssisted}
+                index={2}
               />{' '}
               to get this wrapped up quickly.
             </p>
@@ -117,10 +120,11 @@ export function FollowUpEmail({ harperAssisted = false }: FollowUpEmailProps) {
             whileTap={allFilled ? { scale: 0.98 } : {}}
             onClick={handleSend}
             disabled={!allFilled || completed}
+            data-testid="email-send"
             className={`w-full mt-4 py-2.5 rounded-full font-semibold text-sm transition-all cursor-pointer
               ${allFilled && !completed
-                ? 'bg-harper-teal text-harper-beige hover:bg-harper-teal-mid'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? 'bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight hover:shadow-lg'
+                : 'bg-slate-700 text-mist/50 cursor-not-allowed'
               }
             `}
           >
@@ -137,15 +141,17 @@ function BlankSlot({
   value,
   onClick,
   harperAssisted,
+  index,
 }: {
   filled: boolean
   value: string
   onClick: () => void
   harperAssisted: boolean
+  index: number
 }) {
   if (filled) {
     return (
-      <span className={`font-medium underline decoration-dotted ${harperAssisted ? 'text-harper-green' : 'text-harper-teal'}`}>
+      <span className={`font-medium underline decoration-dotted ${harperAssisted ? 'text-emerald' : 'text-pearl'}`}>
         {value}
       </span>
     )
@@ -153,8 +159,9 @@ function BlankSlot({
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center px-2 py-0.5 bg-harper-coral/10 border border-harper-coral/30
-                 rounded text-harper-coral text-xs font-medium hover:bg-harper-coral/20 transition-colors cursor-pointer"
+      data-testid={`email-blank-${index}`}
+      className="inline-flex items-center px-2 py-0.5 bg-crimson/10 border border-crimson/30
+                 rounded text-crimson text-xs font-medium hover:bg-crimson/20 transition-colors cursor-pointer"
     >
       [___]
     </button>

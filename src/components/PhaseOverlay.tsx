@@ -42,18 +42,26 @@ export function PhaseOverlay({ phase }: PhaseOverlayProps) {
     <AnimatePresence>
       {visible && current && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
           className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
         >
-          <div className="text-center">
+          {/* Subtle backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-midnight/60 backdrop-blur-[2px]"
+          />
+
+          <div className="text-center relative z-10">
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-2xl font-semibold text-harper-teal"
+              transition={{ delay: 0.1, duration: 0.4 }}
+              className="text-3xl font-semibold text-pearl tracking-tight"
             >
               {current.headline}
             </motion.p>
@@ -61,8 +69,8 @@ export function PhaseOverlay({ phase }: PhaseOverlayProps) {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-sm text-harper-teal-mid mt-1"
+                transition={{ delay: 0.5, duration: 0.4 }}
+                className="text-sm text-mist/70 mt-2 max-w-sm mx-auto"
               >
                 {current.sub}
               </motion.p>

@@ -73,17 +73,17 @@ export function TaskIntro({ taskType }: TaskIntroProps) {
     <AnimatePresence>
       {visible && currentIntro && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
           className="absolute top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
         >
-          <div className="bg-harper-teal/95 backdrop-blur-sm rounded-xl px-6 py-4 shadow-xl max-w-md text-center">
-            <p className="text-xs text-harper-beige/60 uppercase tracking-wider font-semibold mb-1">
+          <div className="bg-slate-800 rounded-2xl px-6 py-4 card-elevated-lg max-w-md text-center border border-gold/20">
+            <p className="text-[10px] text-gold/60 uppercase tracking-[0.15em] font-semibold mb-1.5">
               {currentIntro.title}
             </p>
-            <p className="text-sm text-harper-beige leading-relaxed">
+            <p className="text-[13px] text-pearl/90 leading-relaxed">
               {currentIntro.line}
             </p>
           </div>

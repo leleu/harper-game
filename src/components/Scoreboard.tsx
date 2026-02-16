@@ -15,10 +15,12 @@ export function Scoreboard() {
   const adminRatio = totalTime > 0 ? Math.round((adminTime / totalTime) * 100) : 0
 
   return (
-    <div className="w-56 bg-harper-cream/50 border-l border-harper-muted/20 p-4 flex flex-col gap-4 shrink-0">
-      <h3 className="text-xs font-semibold text-harper-teal uppercase tracking-wider">Your Day</h3>
+    <div className="w-52 bg-gradient-to-b from-slate-800/60 to-slate-800/30 border-l border-slate-700/40 p-4 flex flex-col gap-3 shrink-0">
+      <h3 className="text-[10px] font-semibold text-mist uppercase tracking-[0.15em]">
+        Your Day
+      </h3>
 
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         <Stat label="Tasks Done" value={tasksCompleted.toString()} />
 
         <AnimatePresence>
@@ -38,13 +40,15 @@ export function Scoreboard() {
           danger={adminRatio > 60}
         />
 
-        <Stat label="Total Clicks" value={totalClicks.toString()} />
+        <div className="h-px bg-slate-700/40" />
+
+        <Stat label="Total Clicks" value={totalClicks.toString()} subdued />
         <Stat label="Discovery Calls" value={discoveryCalls.toString()} gold />
         <Stat label="Policies Bound" value={policiesBound.toString()} gold />
       </div>
 
       {/* Phase indicator */}
-      <div className="mt-auto pt-4 border-t border-harper-muted/10">
+      <div className="mt-auto pt-3 border-t border-slate-700/30">
         <PhaseIndicator phase={gamePhase} />
       </div>
     </div>
@@ -56,17 +60,19 @@ function Stat({
   value,
   danger = false,
   gold = false,
+  subdued = false,
 }: {
   label: string
   value: string
   danger?: boolean
   gold?: boolean
+  subdued?: boolean
 }) {
   return (
-    <div>
-      <p className="text-[10px] text-harper-muted uppercase tracking-wider">{label}</p>
-      <p className={`font-mono text-lg font-medium ${
-        danger ? 'text-harper-coral' : gold ? 'text-amber-500' : 'text-harper-teal'
+    <div className="flex items-baseline justify-between">
+      <p className="text-[10px] text-mist tracking-wide">{label}</p>
+      <p className={`font-mono text-base font-medium tabular-nums ${
+        danger ? 'text-crimson' : gold ? 'text-gold' : subdued ? 'text-mist' : 'text-pearl'
       }`}>
         {value}
       </p>
@@ -76,21 +82,28 @@ function Stat({
 
 function PhaseIndicator({ phase }: { phase: string }) {
   const labels: Record<string, { text: string; color: string }> = {
-    start: { text: 'Ready', color: 'text-harper-muted' },
-    tutorial: { text: 'Learning the ropes', color: 'text-harper-green' },
-    ramp: { text: 'Getting busy...', color: 'text-harper-warning' },
-    overwhelm: { text: 'Drowning', color: 'text-harper-coral' },
-    harper: { text: 'Harper activating...', color: 'text-harper-green' },
-    mastery: { text: 'In the zone', color: 'text-harper-green' },
-    winddown: { text: 'Wrapping up', color: 'text-harper-muted' },
-    end: { text: 'Day complete', color: 'text-harper-teal' },
+    start: { text: 'Ready', color: 'text-mist' },
+    tutorial: { text: 'Learning the ropes', color: 'text-emerald' },
+    ramp: { text: 'Getting busy...', color: 'text-amber' },
+    overwhelm: { text: 'Drowning', color: 'text-crimson' },
+    harper: { text: 'Harper activating...', color: 'text-emerald' },
+    mastery: { text: 'In the zone', color: 'text-emerald' },
+    winddown: { text: 'Wrapping up', color: 'text-mist' },
+    end: { text: 'Day complete', color: 'text-gold' },
   }
 
   const info = labels[phase] || labels.start
 
   return (
-    <p className={`text-xs font-medium ${info.color}`}>
-      {info.text}
-    </p>
+    <div className="flex items-center gap-1.5">
+      <div className={`w-1.5 h-1.5 rounded-full ${
+        phase === 'overwhelm' ? 'bg-crimson animate-pulse' :
+        phase === 'mastery' || phase === 'harper' ? 'bg-emerald' :
+        'bg-mist/40'
+      }`} />
+      <p className={`text-[11px] font-medium ${info.color}`}>
+        {info.text}
+      </p>
+    </div>
   )
 }

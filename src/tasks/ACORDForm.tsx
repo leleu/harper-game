@@ -89,13 +89,13 @@ export function ACORDForm({ harperAssisted = false }: ACORDFormProps) {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
           >
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', damping: 12 }}
-              className="bg-harper-green text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
+              className="bg-emerald text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
             >
               ✓
             </motion.div>
@@ -118,6 +118,7 @@ export function ACORDForm({ harperAssisted = false }: ACORDFormProps) {
                   key={item.key}
                   onClick={() => handleStickyClick(item.key, item.value)}
                   disabled={isFilled}
+                  data-testid={`sticky-${item.key}`}
                   className={`w-full text-left p-2 rounded text-sm transition-all cursor-pointer
                     ${isFilled
                       ? 'opacity-30 line-through cursor-default'
@@ -135,20 +136,20 @@ export function ACORDForm({ harperAssisted = false }: ACORDFormProps) {
           </div>
         </div>
         {!harperAssisted && (
-          <p className="text-xs text-harper-muted mt-2 text-center">
+          <p className="text-xs text-mist mt-2 text-center">
             Click a value, then click the matching field →
           </p>
         )}
       </div>
 
       {/* ACORD Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-harper-muted/20 p-6 max-w-md w-full">
+      <div className="card-elevated rounded-xl p-6 max-w-md w-full border border-slate-600/30">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-harper-teal uppercase tracking-wider">
+          <h3 className="text-sm font-semibold text-gold uppercase tracking-wider">
             ACORD 125 — Commercial Application
           </h3>
           {harperAssisted && (
-            <span className="text-xs bg-harper-green/10 text-harper-green px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-emerald/10 text-emerald px-2 py-0.5 rounded-full font-medium">
               ⚡ Harper Pre-filled
             </span>
           )}
@@ -165,27 +166,28 @@ export function ACORDForm({ harperAssisted = false }: ACORDFormProps) {
                 key={field.key}
                 onClick={() => handleFieldClick(field.key)}
                 disabled={isFilled}
+                data-testid={`field-${field.key}`}
                 layout
                 className={`w-full text-left p-3 rounded-lg border-2 transition-all cursor-pointer
                   ${isFilled
                     ? isHarperPrefilled
-                      ? 'border-harper-green/30 bg-harper-green/5'
-                      : 'border-harper-green/30 bg-harper-green/5'
+                      ? 'border-emerald/30 bg-emerald/5'
+                      : 'border-emerald/30 bg-emerald/5'
                     : isTarget
-                      ? 'border-harper-coral bg-harper-coral/5 ring-1 ring-harper-coral/30'
-                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                      ? 'border-crimson bg-crimson/5 ring-1 ring-crimson/30'
+                      : 'border-slate-600/30 bg-slate-700/30 hover:border-slate-500'
                   }
                 `}
               >
-                <span className="text-xs text-harper-muted block">{field.label}</span>
+                <span className="text-xs text-mist block">{field.label}</span>
                 {isFilled ? (
-                  <span className={`text-sm font-medium ${isHarperPrefilled ? 'text-harper-green' : 'text-harper-teal'}`}>
+                  <span className={`text-sm font-medium ${isHarperPrefilled ? 'text-emerald' : 'text-pearl'}`}>
                     {scenario[field.key]}
                   </span>
                 ) : isTarget ? (
-                  <span className="text-sm text-harper-coral font-medium">Click to fill ↵</span>
+                  <span className="text-sm text-crimson font-medium">Click to fill ↵</span>
                 ) : (
-                  <span className="text-sm text-gray-300">—</span>
+                  <span className="text-sm text-mist/40">—</span>
                 )}
               </motion.button>
             )
@@ -198,10 +200,11 @@ export function ACORDForm({ harperAssisted = false }: ACORDFormProps) {
           whileTap={allFilled ? { scale: 0.98 } : {}}
           onClick={handleSubmit}
           disabled={!allFilled || completed}
+          data-testid="acord-submit"
           className={`w-full mt-4 py-2.5 rounded-full font-semibold text-sm transition-all cursor-pointer
             ${allFilled && !completed
-              ? 'bg-harper-teal text-harper-beige hover:bg-harper-teal-mid'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              ? 'bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight hover:shadow-lg'
+              : 'bg-slate-700 text-mist/50 cursor-not-allowed'
             }
           `}
         >

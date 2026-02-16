@@ -48,7 +48,7 @@ export function ProposalPresentation() {
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
           >
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
@@ -56,8 +56,8 @@ export function ProposalPresentation() {
               transition={{ type: 'spring', damping: 12 }}
               className={`rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg
                 ${selected !== null && options[selected].correct
-                  ? 'bg-harper-green text-white'
-                  : 'bg-harper-warning text-white'
+                  ? 'bg-emerald text-white'
+                  : 'bg-amber text-white'
                 }
               `}
             >
@@ -68,23 +68,23 @@ export function ProposalPresentation() {
       </AnimatePresence>
 
       <div className="max-w-lg w-full">
-        <div className="bg-white rounded-xl shadow-sm border-2 border-amber-300 p-6">
+        <div className="card-elevated rounded-xl border-2 border-gold/40 p-6">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-lg">⭐</span>
-            <h3 className="text-sm font-semibold text-harper-teal uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gold uppercase tracking-wider">
               Proposal — {activeTask?.clientName}
             </h3>
           </div>
 
           {/* Client priority */}
-          <div className="bg-amber-50 rounded-lg p-4 mb-5">
-            <p className="text-xs text-amber-600 font-medium mb-1">Client's Priority</p>
-            <p className="text-sm text-harper-teal italic">
+          <div className="bg-slate-700/50 rounded-lg p-4 mb-5 border border-slate-600/30">
+            <p className="text-xs text-gold font-medium mb-1">Client's Priority</p>
+            <p className="text-sm text-pearl italic">
               {priorityLabel[priority] || priorityLabel.value}
             </p>
           </div>
 
-          <p className="text-sm text-harper-teal-mid mb-3">Which option matches their priority?</p>
+          <p className="text-sm text-mist mb-3">Which option matches their priority?</p>
 
           <div className="space-y-2">
             {options.map((opt, idx) => {
@@ -96,15 +96,16 @@ export function ProposalPresentation() {
                   whileTap={!completed ? { scale: 0.99 } : {}}
                   onClick={() => handleSelect(idx)}
                   disabled={completed}
+                  data-testid={`proposal-option-${idx}`}
                   className={`w-full text-left p-3 rounded-lg border-2 transition-all cursor-pointer
                     ${isSelected
-                      ? 'border-harper-coral bg-harper-coral/5 ring-1 ring-harper-coral/30'
-                      : 'border-gray-200 bg-gray-50 hover:border-harper-teal/30'
+                      ? 'border-gold bg-gold/5 ring-1 ring-gold/30'
+                      : 'border-slate-600/30 bg-slate-700/30 hover:border-gold/30'
                     }
-                    ${completed && opt.correct ? 'border-harper-green bg-harper-green/5' : ''}
+                    ${completed && opt.correct ? 'border-emerald bg-emerald/5' : ''}
                   `}
                 >
-                  <span className="text-sm font-medium text-harper-teal">{opt.label}</span>
+                  <span className="text-sm font-medium text-pearl">{opt.label}</span>
                 </motion.button>
               )
             })}
@@ -115,10 +116,11 @@ export function ProposalPresentation() {
             whileTap={selected !== null ? { scale: 0.98 } : {}}
             onClick={handlePresent}
             disabled={selected === null || completed}
+            data-testid="proposal-present"
             className={`w-full mt-4 py-2.5 rounded-full font-semibold text-sm transition-all cursor-pointer
               ${selected !== null && !completed
-                ? 'bg-harper-teal text-harper-beige hover:bg-harper-teal-mid'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? 'bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight hover:shadow-lg'
+                : 'bg-slate-700 text-mist/50 cursor-not-allowed'
               }
             `}
           >

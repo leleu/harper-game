@@ -59,13 +59,13 @@ export function RenewalProcessing({ harperAssisted = false }: RenewalProcessingP
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
           >
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', damping: 12 }}
-              className="bg-harper-green text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
+              className="bg-emerald text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
             >
               ✓
             </motion.div>
@@ -74,13 +74,13 @@ export function RenewalProcessing({ harperAssisted = false }: RenewalProcessingP
       </AnimatePresence>
 
       <div className="max-w-lg w-full">
-        <div className="bg-white rounded-xl shadow-sm border border-harper-muted/20 p-6">
+        <div className="card-elevated rounded-xl border border-slate-600/30 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-harper-teal uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gold uppercase tracking-wider">
               Renewal — {activeTask?.clientName}
             </h3>
             {harperAssisted && (
-              <span className="text-xs bg-harper-green/10 text-harper-green px-2 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-emerald/10 text-emerald px-2 py-0.5 rounded-full font-medium">
                 ⚡ Renewal Autopilot
               </span>
             )}
@@ -92,15 +92,15 @@ export function RenewalProcessing({ harperAssisted = false }: RenewalProcessingP
               <div key={step} className="flex items-center gap-2">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium
                   ${currentStep === step
-                    ? 'bg-harper-coral text-white'
+                    ? 'bg-crimson text-white'
                     : (i < ['review', 'flag', 'send'].indexOf(currentStep))
-                      ? 'bg-harper-green text-white'
-                      : 'bg-gray-200 text-gray-400'
+                      ? 'bg-emerald text-white'
+                      : 'bg-slate-700 text-mist/50'
                   }
                 `}>
                   {i < ['review', 'flag', 'send'].indexOf(currentStep) ? '✓' : i + 1}
                 </div>
-                {i < 2 && <div className="w-8 h-0.5 bg-gray-200" />}
+                {i < 2 && <div className="w-8 h-0.5 bg-slate-700" />}
               </div>
             ))}
           </div>
@@ -108,17 +108,18 @@ export function RenewalProcessing({ harperAssisted = false }: RenewalProcessingP
           {/* Step 1: Review policy tabs */}
           {currentStep === 'review' && (
             <div>
-              <p className="text-sm text-harper-teal-mid mb-3">Review current policy sections:</p>
+              <p className="text-sm text-mist mb-3">Review current policy sections:</p>
               <div className="space-y-2">
                 {policyTabs.map((tab, i) => (
                   <button
                     key={i}
                     onClick={() => handleTabClick(i)}
                     disabled={reviewedTabs[i]}
+                    data-testid={`renewal-tab-${i}`}
                     className={`w-full text-left p-3 rounded-lg border transition-all cursor-pointer
                       ${reviewedTabs[i]
-                        ? 'border-harper-green/30 bg-harper-green/5 text-harper-green'
-                        : 'border-gray-200 bg-gray-50 hover:border-harper-coral hover:bg-harper-coral/5 text-harper-teal'
+                        ? 'border-emerald/30 bg-emerald/5 text-emerald'
+                        : 'border-slate-600/30 bg-slate-700/30 hover:border-crimson hover:bg-crimson/5 text-pearl'
                       }
                     `}
                   >
@@ -134,15 +135,16 @@ export function RenewalProcessing({ harperAssisted = false }: RenewalProcessingP
           {/* Step 2: Flag gap */}
           {currentStep === 'flag' && (
             <div>
-              <p className="text-sm text-harper-teal-mid mb-3">Coverage gap detected:</p>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-3">
-                <p className="text-sm text-red-800 font-medium">⚠ {gap}</p>
+              <p className="text-sm text-mist mb-3">Coverage gap detected:</p>
+              <div className="bg-crimson/10 border border-crimson/30 rounded-lg p-3 mb-3">
+                <p className="text-sm text-crimson-bright font-medium">⚠ {gap}</p>
               </div>
               <button
                 onClick={handleFlagGap}
                 disabled={flaggedGap}
-                className="w-full py-2.5 rounded-full font-semibold text-sm bg-harper-coral text-white
-                           hover:bg-red-500 transition-colors cursor-pointer"
+                data-testid="renewal-flag"
+                className="w-full py-2.5 rounded-full font-semibold text-sm bg-crimson text-white
+                           hover:bg-crimson-bright transition-colors cursor-pointer"
               >
                 Flag for Renewal
               </button>
@@ -153,16 +155,16 @@ export function RenewalProcessing({ harperAssisted = false }: RenewalProcessingP
           {currentStep === 'send' && (
             <div>
               {harperAssisted ? (
-                <div className="bg-harper-green/5 border border-harper-green/20 rounded-lg p-4 mb-3">
-                  <p className="text-sm text-harper-green font-medium mb-1">Summary Ready</p>
-                  <p className="text-xs text-harper-teal-mid">
+                <div className="bg-emerald/5 border border-emerald/20 rounded-lg p-4 mb-3">
+                  <p className="text-sm text-emerald font-medium mb-1">Summary Ready</p>
+                  <p className="text-xs text-mist">
                     Policy reviewed automatically. Gap flagged: {gap}.
                     Renewal notice drafted and ready to send.
                   </p>
                 </div>
               ) : (
-                <p className="text-sm text-harper-teal-mid mb-3">
-                  Renewal notice ready. Gap flagged: <strong>{gap}</strong>
+                <p className="text-sm text-mist mb-3">
+                  Renewal notice ready. Gap flagged: <strong className="text-pearl">{gap}</strong>
                 </p>
               )}
               <motion.button
@@ -170,8 +172,9 @@ export function RenewalProcessing({ harperAssisted = false }: RenewalProcessingP
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSendNotice}
                 disabled={completed}
-                className="w-full py-2.5 rounded-full font-semibold text-sm bg-harper-teal text-harper-beige
-                           hover:bg-harper-teal-mid transition-colors cursor-pointer"
+                data-testid="renewal-send"
+                className="w-full py-2.5 rounded-full font-semibold text-sm bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight
+                           transition-colors cursor-pointer"
               >
                 {completed ? 'Sent ✓' : 'Send Renewal Notice'}
               </motion.button>

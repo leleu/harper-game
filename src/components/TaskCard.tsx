@@ -12,6 +12,17 @@ const taskLabels: Record<string, string> = {
   'proposal-presentation': 'Proposal',
 }
 
+const taskIcons: Record<string, string> = {
+  'acord-form': '📋',
+  'carrier-submission': '🏢',
+  'quote-comparison': '⚖',
+  'coi-issuance': '📄',
+  'follow-up-email': '✉',
+  'renewal-processing': '🔄',
+  'discovery-call': '📞',
+  'proposal-presentation': '🤝',
+}
+
 interface TaskCardProps {
   task: TaskInstance
   onClick: () => void
@@ -21,53 +32,86 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
   if (task.expired) {
     return (
       <motion.div
-        initial={{ opacity: 1 }}
-        animate={{ opacity: 0.5 }}
-        className="bg-red-50 border border-red-200 rounded-lg p-3 relative"
+        initial={{ opacity: 0.6 }}
+        animate={{ opacity: 0.3 }}
+        transition={{ duration: 0.3 }}
+        className="rounded-lg p-2.5 bg-slate-800/30 border border-crimson/20"
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-3xl text-red-400">✗</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-crimson/50">✗</span>
+          <p className="text-[11px] text-mist/40 line-through flex-1 truncate">{taskLabels[task.type]}</p>
         </div>
-        <p className="text-xs font-medium text-red-400 line-through">{taskLabels[task.type]}</p>
-        <p className="text-xs text-red-300">{task.clientName}</p>
       </motion.div>
     )
   }
 
   const pct = task.maxDeadline > 0 ? task.deadline / task.maxDeadline : 1
-  const timerColor = pct > 0.7 ? 'bg-harper-green' : pct > 0.3 ? 'bg-harper-warning' : 'bg-harper-coral'
-  const borderColor = pct > 0.7 ? 'border-harper-green/20' : pct > 0.3 ? 'border-harper-warning/30' : 'border-harper-coral/30'
+  const isUrgent = pct <= 0.3
+  const isMid = pct <= 0.7
 
   return (
     <motion.button
       layout
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      whileHover={{ scale: 1.02 }}
+      initial={{ opacity: 0, x: -16, scale: 0.97 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      whileHover={{ scale: 1.02, y: -1 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`w-full text-left rounded-lg p-3 border transition-all cursor-pointer
+      data-testid={`task-card-${task.id}`}
+      className={`w-full text-left rounded-xl p-3 transition-all cursor-pointer
         ${task.isGold
-          ? 'bg-amber-50 border-amber-300 ring-1 ring-amber-200'
-          : `bg-white ${borderColor}`
+          ? 'gold-glow'
+          : task.harperAssisted
+            ? 'card-elevated border-emerald/30'
+            : isUrgent
+              ? 'card-elevated pulse-urgent'
+              : 'card-elevated border-slate-600/50'
         }
-        ${task.harperAssisted ? 'ring-1 ring-harper-green/30' : ''}
       `}
     >
-      <div className="flex items-center justify-between mb-1">
-        <p className="text-xs font-semibold text-harper-teal">
-          {task.isGold && <span className="mr-1">⭐</span>}
-          {taskLabels[task.type]}
-          {task.harperAssisted && <span className="ml-1 text-harper-green text-[10px]">⚡</span>}
-        </p>
+      <div className="flex items-start gap-2.5">
+        <span className="text-sm mt-0.5 opacity-80">{taskIcons[task.type]}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs font-semibold text-pearl truncate">
+              {taskLabels[task.type]}
+            </p>
+            {task.harperAssisted && (
+              <span className="shrink-0 text-[9px] bg-emerald-glow/20 text-emerald-glow px-1.5 py-0.5 rounded font-medium border border-emerald/30">
+                AI
+              </span>
+            )}
+            {task.isGold && (
+              <span className="shrink-0 text-[9px] bg-gold/20 text-gold-bright px-1.5 py-0.5 rounded font-medium border border-gold/40">
+                ★
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] text-mist truncate mt-0.5">
+            {task.clientName}
+          </p>
+        </div>
       </div>
-      <p className="text-xs text-harper-teal-mid truncate">{task.clientName} — {task.businessName}</p>
 
       {/* Timer bar */}
-      <div className="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className={`h-full ${timerColor} rounded-full transition-all duration-500`}
-          style={{ width: `${pct * 100}%` }}
+      <div className="mt-2.5 h-1.5 bg-slate-700/50 rounded-full overflow-hidden border border-slate-600/30">
+        <motion.div
+          className={`h-full rounded-full ${
+            isUrgent
+              ? 'bg-gradient-to-r from-crimson to-crimson-bright'
+              : isMid
+                ? 'bg-gradient-to-r from-amber to-amber-bright'
+                : 'bg-gradient-to-r from-emerald to-emerald-bright'
+          }`}
+          style={{
+            width: `${pct * 100}%`,
+            boxShadow: isUrgent
+              ? '0 0 8px rgba(220, 38, 38, 0.4)'
+              : isMid
+                ? '0 0 6px rgba(245, 158, 11, 0.3)'
+                : '0 0 6px rgba(5, 150, 105, 0.3)'
+          }}
+          transition={{ duration: 0.5 }}
         />
       </div>
     </motion.button>

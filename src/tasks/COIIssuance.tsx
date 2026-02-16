@@ -53,13 +53,13 @@ export function COIIssuance({ harperAssisted = false }: COIIssuanceProps) {
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
           >
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', damping: 12 }}
-              className="bg-harper-green text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
+              className="bg-emerald text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
             >
               ✓
             </motion.div>
@@ -69,22 +69,22 @@ export function COIIssuance({ harperAssisted = false }: COIIssuanceProps) {
 
       <div className="max-w-md w-full">
         {/* Client email snippet */}
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-100 mb-4">
-          <p className="text-xs text-blue-400 mb-1">From: {activeTask?.clientName}</p>
-          <p className="text-sm text-blue-900">
-            "Hi, I need a COI sent to <strong>{scenario.coiHolder || 'our landlord'}</strong> at{' '}
-            <strong>{scenario.coiEmail || 'landlord@example.com'}</strong> ASAP.
+        <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600/30 mb-4">
+          <p className="text-xs text-mist mb-1">From: {activeTask?.clientName}</p>
+          <p className="text-sm text-pearl-dim">
+            "Hi, I need a COI sent to <strong className="text-pearl">{scenario.coiHolder || 'our landlord'}</strong> at{' '}
+            <strong className="text-pearl">{scenario.coiEmail || 'landlord@example.com'}</strong> ASAP.
             Thanks!"
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-harper-muted/20 p-6">
+        <div className="card-elevated rounded-xl border border-slate-600/30 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-harper-teal uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gold uppercase tracking-wider">
               Certificate of Insurance
             </h3>
             {harperAssisted && (
-              <span className="text-xs bg-harper-green/10 text-harper-green px-2 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-emerald/10 text-emerald px-2 py-0.5 rounded-full font-medium">
                 ⚡ Auto-Generated
               </span>
             )}
@@ -98,20 +98,21 @@ export function COIIssuance({ harperAssisted = false }: COIIssuanceProps) {
                   key={field.key}
                   onClick={() => handleFieldClick(field.key)}
                   disabled={isFilled}
+                  data-testid={`coi-field-${field.key}`}
                   className={`w-full text-left p-3 rounded-lg border-2 transition-all cursor-pointer
                     ${isFilled
-                      ? 'border-harper-green/30 bg-harper-green/5'
-                      : 'border-gray-200 bg-gray-50 hover:border-harper-coral hover:bg-harper-coral/5'
+                      ? 'border-emerald/30 bg-emerald/5'
+                      : 'border-slate-600/30 bg-slate-700/30 hover:border-crimson hover:bg-crimson/5'
                     }
                   `}
                 >
-                  <span className="text-[10px] text-harper-muted block">{field.label}</span>
+                  <span className="text-[10px] text-mist block">{field.label}</span>
                   {isFilled ? (
-                    <span className={`text-sm font-medium ${harperAssisted ? 'text-harper-green' : 'text-harper-teal'}`}>
+                    <span className={`text-sm font-medium ${harperAssisted ? 'text-emerald' : 'text-pearl'}`}>
                       {scenario[field.key] || 'N/A'}
                     </span>
                   ) : (
-                    <span className="text-sm text-gray-300">Click to fill</span>
+                    <span className="text-sm text-mist/40">Click to fill</span>
                   )}
                 </button>
               )
@@ -123,10 +124,11 @@ export function COIIssuance({ harperAssisted = false }: COIIssuanceProps) {
             whileTap={allFilled ? { scale: 0.98 } : {}}
             onClick={handleSend}
             disabled={!allFilled || completed}
+            data-testid="coi-send"
             className={`w-full mt-4 py-2.5 rounded-full font-semibold text-sm transition-all cursor-pointer
               ${allFilled && !completed
-                ? 'bg-harper-teal text-harper-beige hover:bg-harper-teal-mid'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? 'bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight hover:shadow-lg'
+                : 'bg-slate-700 text-mist/50 cursor-not-allowed'
               }
             `}
           >

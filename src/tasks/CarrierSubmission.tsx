@@ -103,32 +103,32 @@ export function CarrierSubmission({ harperAssisted = false }: CarrierSubmissionP
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+              className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
             >
               <motion.div
                 initial={{ scale: 0, rotate: -20 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: 'spring', damping: 12 }}
-                className="bg-harper-green text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
+                className="bg-emerald text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
               >
                 ✓
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="bg-white rounded-xl shadow-sm border border-harper-muted/20 p-8 max-w-md w-full text-center">
-          <span className="text-xs bg-harper-green/10 text-harper-green px-2 py-0.5 rounded-full font-medium">
+        <div className="card-elevated rounded-xl border border-slate-600/30 p-8 max-w-md w-full text-center">
+          <span className="text-xs bg-emerald/10 text-emerald px-2 py-0.5 rounded-full font-medium">
             ⚡ Harper Smart Submit
           </span>
-          <h3 className="text-lg font-semibold text-harper-teal mt-3 mb-2">
+          <h3 className="text-lg font-semibold text-pearl mt-3 mb-2">
             Submit to {PORTALS.length} Carriers
           </h3>
-          <p className="text-sm text-harper-teal-mid mb-4">
+          <p className="text-sm text-mist mb-4">
             {activeTask?.clientName} — {scenario.businessName}
           </p>
           <div className="space-y-2 mb-4">
             {PORTALS.map((p, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm text-harper-green">
+              <div key={i} className="flex items-center gap-2 text-sm text-emerald">
                 <span>✓</span> <span>{p.name} — pre-filled</span>
               </div>
             ))}
@@ -138,8 +138,9 @@ export function CarrierSubmission({ harperAssisted = false }: CarrierSubmissionP
             whileTap={{ scale: 0.98 }}
             onClick={handleSubmitAll}
             disabled={completed}
-            className="bg-harper-teal text-harper-beige px-6 py-2.5 rounded-full font-semibold text-sm
-                       hover:bg-harper-teal-mid transition-colors cursor-pointer disabled:opacity-50"
+            data-testid="carrier-submit-all"
+            className="bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight px-6 py-2.5 rounded-full font-semibold text-sm
+                       transition-colors cursor-pointer disabled:opacity-50"
           >
             Submit All →
           </motion.button>
@@ -155,13 +156,13 @@ export function CarrierSubmission({ harperAssisted = false }: CarrierSubmissionP
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
           >
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', damping: 12 }}
-              className="bg-harper-green text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
+              className="bg-emerald text-white rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg"
             >
               ✓
             </motion.div>
@@ -169,7 +170,7 @@ export function CarrierSubmission({ harperAssisted = false }: CarrierSubmissionP
         )}
       </AnimatePresence>
 
-      <p className="text-xs text-harper-muted">
+      <p className="text-xs text-mist">
         Submit {activeTask?.clientName}'s application to {PORTALS.length} carrier portals — same data, different forms
       </p>
 
@@ -181,12 +182,12 @@ export function CarrierSubmission({ harperAssisted = false }: CarrierSubmissionP
           return (
             <div
               key={pi}
-              className={`bg-white rounded-xl shadow-sm border p-5 w-56 transition-all
-                ${isSubmitted ? 'border-harper-green/30 opacity-60' : 'border-harper-muted/20'}
+              className={`card-elevated rounded-xl border p-5 w-56 transition-all
+                ${isSubmitted ? 'border-emerald/30 opacity-60' : 'border-slate-600/30'}
               `}
             >
-              <h4 className="text-xs font-semibold text-harper-teal uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                {isSubmitted && <span className="text-harper-green">✓</span>}
+              <h4 className="text-xs font-semibold text-gold uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                {isSubmitted && <span className="text-emerald">✓</span>}
                 {portal.name}
               </h4>
 
@@ -199,19 +200,20 @@ export function CarrierSubmission({ harperAssisted = false }: CarrierSubmissionP
                       key={key}
                       onClick={() => handleFieldClick(pi, fi)}
                       disabled={isFilled || isSubmitted}
+                      data-testid={`carrier-field-${pi}-${fi}`}
                       className={`w-full text-left p-2 rounded border text-sm transition-all cursor-pointer
                         ${isFilled
-                          ? 'border-harper-green/20 bg-harper-green/5'
-                          : 'border-gray-200 bg-gray-50 hover:border-harper-coral hover:bg-harper-coral/5'
+                          ? 'border-emerald/20 bg-emerald/5'
+                          : 'border-slate-600/30 bg-slate-700/30 hover:border-crimson hover:bg-crimson/5'
                         }
                         ${isSubmitted ? 'cursor-default' : ''}
                       `}
                     >
-                      <span className="text-[10px] text-harper-muted block">{field.label}</span>
+                      <span className="text-[10px] text-mist block">{field.label}</span>
                       {isFilled ? (
-                        <span className="text-xs font-medium text-harper-teal">{scenario[field.key]}</span>
+                        <span className="text-xs font-medium text-pearl">{scenario[field.key]}</span>
                       ) : (
-                        <span className="text-xs text-gray-300">Click to fill</span>
+                        <span className="text-xs text-mist/40">Click to fill</span>
                       )}
                     </button>
                   )
@@ -221,10 +223,11 @@ export function CarrierSubmission({ harperAssisted = false }: CarrierSubmissionP
               <button
                 onClick={() => handlePortalSubmit(pi)}
                 disabled={!portalFieldsFilled || isSubmitted}
+                data-testid={`carrier-portal-submit-${pi}`}
                 className={`w-full mt-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer
                   ${portalFieldsFilled && !isSubmitted
-                    ? 'bg-harper-teal text-harper-beige hover:bg-harper-teal-mid'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? 'bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight'
+                    : 'bg-slate-700 text-mist/50 cursor-not-allowed'
                   }
                 `}
               >

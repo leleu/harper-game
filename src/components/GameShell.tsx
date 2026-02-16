@@ -1,11 +1,14 @@
-import { useEffect, useRef, useMemo } from 'react'
+import { useEffect, useRef, useMemo, useState } from 'react'
 import { TopBar } from './TopBar'
 import { TaskQueue } from './TaskQueue'
 import { Workspace } from './Workspace'
 import { Scoreboard } from './Scoreboard'
-import { HarperUnlock } from './HarperUnlock'
+import { HarperUnlockCinematic } from './HarperUnlockCinematic'
 import { TaskIntro } from './TaskIntro'
 import { PhaseOverlay } from './PhaseOverlay'
+import { WelcomeCard } from './WelcomeCard'
+import { PauseScreen } from './PauseScreen'
+import { DebugControls } from './DebugControls'
 import { useGameStore } from '../state/gameStore'
 import { createTask } from '../engine/taskFactory'
 import { generateSpawnSchedule, getPacingPhase } from '../engine/pacing'
@@ -15,6 +18,12 @@ export function GameShell() {
   useSoundEffects()
   const tick = useGameStore((s) => s.tick)
   const isRunning = useGameStore((s) => s.isRunning)
+  const isPaused = useGameStore((s) => s.isPaused)
+  const setPaused = useGameStore((s) => s.setPaused)
+  const showPauseScreen = useGameStore((s) => s.showPauseScreen)
+  const setShowPauseScreen = useGameStore((s) => s.setShowPauseScreen)
+  const hasShownWelcomeCard = useGameStore((s) => s.hasShownWelcomeCard)
+  const markWelcomeCardShown = useGameStore((s) => s.markWelcomeCardShown)
   const addTask = useGameStore((s) => s.addTask)
   const taskQueue = useGameStore((s) => s.taskQueue)
   const expireTask = useGameStore((s) => s.expireTask)
@@ -26,10 +35,38 @@ export function GameShell() {
   const unlockHarper = useGameStore((s) => s.unlockHarper)
   const endGame = useGameStore((s) => s.endGame)
   const activeTask = useGameStore((s) => s.activeTask)
+  const tasksCompleted = useGameStore((s) => s.tasksCompleted)
+  const clientsLost = useGameStore((s) => s.clientsLost)
+  const adminTime = useGameStore((s) => s.adminTime)
+  const sellingTime = useGameStore((s) => s.sellingTime)
+
   const lastTickRef = useRef<number>(0)
   const spawnIndexRef = useRef(0)
+  const [currentWelcomeCard, setCurrentWelcomeCard] = useState<string | null>(null)
 
   const spawnSchedule = useMemo(() => generateSpawnSchedule(), [])
+
+  const totalTime = adminTime + sellingTime
+  const adminRatio = totalTime > 0 ? Math.round((adminTime / totalTime) * 100) : 0
+
+  // ESC key to toggle pause screen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowPauseScreen(!showPauseScreen)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showPauseScreen, setShowPauseScreen])
+
+  // Welcome Card 1: Game intro (shows once at start)
+  useEffect(() => {
+    if (isRunning && realTimeElapsed < 1 && !hasShownWelcomeCard('intro')) {
+      setPaused(true)
+      setCurrentWelcomeCard('intro')
+    }
+  }, [isRunning, realTimeElapsed, hasShownWelcomeCard, setPaused])
 
   // Game loop
   useEffect(() => {
@@ -51,7 +88,7 @@ export function GameShell() {
 
   // Spawn tasks
   useEffect(() => {
-    if (!isRunning) return
+    if (!isRunning || isPaused) return
     while (
       spawnIndexRef.current < spawnSchedule.length &&
       spawnSchedule[spawnIndexRef.current].realTime <= realTimeElapsed
@@ -61,7 +98,7 @@ export function GameShell() {
       addTask(task)
       spawnIndexRef.current++
     }
-  }, [isRunning, realTimeElapsed, spawnSchedule, addTask])
+  }, [isRunning, isPaused, realTimeElapsed, spawnSchedule, addTask])
 
   // Update game phase
   useEffect(() => {
@@ -70,20 +107,29 @@ export function GameShell() {
     setGamePhase(phase)
   }, [isRunning, realTimeElapsed, setGamePhase])
 
-  // Harper unlock at 'harper' phase
+  // Harper unlock at 'harper' phase — show WelcomeCard 2 first, then cinematic
   useEffect(() => {
     if (gamePhase === 'harper' && !harperUnlocked) {
-      unlockHarper()
+      if (!hasShownWelcomeCard('harper-stats')) {
+        // Show WelcomeCard 2 with pre-Harper stats before cinematic
+        setPaused(true)
+        setCurrentWelcomeCard('harper-stats')
+      } else {
+        // Card already dismissed — proceed to unlock + cinematic
+        unlockHarper()
+        setPaused(true)
+      }
     }
-  }, [gamePhase, harperUnlocked, unlockHarper])
+  }, [gamePhase, harperUnlocked, unlockHarper, setPaused, hasShownWelcomeCard])
 
   // Expire tasks
   useEffect(() => {
+    if (isPaused) return
     const expiredIds = taskQueue
       .filter(t => !t.expired && !t.completed && t.deadline <= 0)
       .map(t => t.id)
     expiredIds.forEach(id => expireTask(id))
-  }, [taskQueue, expireTask])
+  }, [taskQueue, expireTask, isPaused])
 
   // End game at 5PM
   useEffect(() => {
@@ -92,8 +138,24 @@ export function GameShell() {
     }
   }, [gameTimeMinutes, isRunning, endGame])
 
+  const handleDismissWelcome = () => {
+    if (currentWelcomeCard) {
+      const cardId = currentWelcomeCard
+      markWelcomeCardShown(cardId)
+      setCurrentWelcomeCard(null)
+
+      if (cardId === 'harper-stats') {
+        // After dismissing pre-Harper stats card, trigger the unlock cinematic
+        unlockHarper()
+        // Stay paused — the cinematic will handle unpausing
+      } else {
+        setPaused(false)
+      }
+    }
+  }
+
   return (
-    <div className="h-screen flex flex-col bg-harper-beige">
+    <div className="h-screen flex flex-col bg-midnight relative">
       <TopBar />
       <div className="flex-1 flex overflow-hidden">
         <TaskQueue />
@@ -101,10 +163,46 @@ export function GameShell() {
           <Workspace />
           <TaskIntro taskType={activeTask?.type ?? null} />
           <PhaseOverlay phase={gamePhase} />
-          <HarperUnlock />
+          <HarperUnlockCinematic />
         </div>
         <Scoreboard />
       </div>
+
+      {/* Welcome Card 1: Game Introduction */}
+      <WelcomeCard
+        isVisible={currentWelcomeCard === 'intro'}
+        onDismiss={handleDismissWelcome}
+        category="YOUR DAY"
+        headline="You have 9 hours and 20 clients."
+        body="Most insurance brokers spend 57% of their time on admin work. You're about to feel why."
+        bodySecondary="Tasks appear on the left. Click to start. Complete before the timer runs out, or the client walks."
+        dismissText="Let's go"
+      />
+
+      {/* Welcome Card 2: Pre-Harper Stats */}
+      <WelcomeCard
+        isVisible={currentWelcomeCard === 'harper-stats'}
+        onDismiss={handleDismissWelcome}
+        category="HALFWAY THROUGH"
+        headline="Here's your morning so far."
+        body="You've been doing everything manually — forms, portals, follow-ups. Just like a real broker."
+        stats={{
+          tasksCompleted,
+          clientsLost,
+          adminRatio,
+        }}
+        bodySecondary="What if the admin work handled itself?"
+        dismissText="Show me"
+      />
+
+      {/* Pause Screen */}
+      <PauseScreen
+        isVisible={showPauseScreen}
+        onClose={() => setShowPauseScreen(false)}
+      />
+
+      {/* Debug Controls */}
+      <DebugControls />
     </div>
   )
 }

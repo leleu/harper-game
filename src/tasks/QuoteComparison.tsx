@@ -48,7 +48,7 @@ export function QuoteComparison({ harperAssisted = false }: QuoteComparisonProps
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-harper-beige/60"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-midnight/60"
           >
             <motion.div
               initial={{ scale: 0, rotate: -20 }}
@@ -56,8 +56,8 @@ export function QuoteComparison({ harperAssisted = false }: QuoteComparisonProps
               transition={{ type: 'spring', damping: 12 }}
               className={`rounded-full w-24 h-24 flex items-center justify-center text-5xl shadow-lg
                 ${selected !== null && quotes[selected].isBest
-                  ? 'bg-harper-green text-white'
-                  : 'bg-harper-warning text-white'
+                  ? 'bg-emerald text-white'
+                  : 'bg-amber text-white'
                 }
               `}
             >
@@ -70,15 +70,15 @@ export function QuoteComparison({ harperAssisted = false }: QuoteComparisonProps
       <div className="max-w-3xl w-full">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-sm font-semibold text-harper-teal uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gold uppercase tracking-wider">
               Quote Comparison — {activeTask?.clientName}
             </h3>
-            <p className="text-xs text-harper-muted mt-0.5">
+            <p className="text-xs text-mist mt-0.5">
               Compare quotes and select the best value for the client
             </p>
           </div>
           {harperAssisted && (
-            <span className="text-xs bg-harper-green/10 text-harper-green px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-emerald/10 text-emerald px-2 py-0.5 rounded-full font-medium">
               ⚡ Normalized by Harper
             </span>
           )}
@@ -96,27 +96,28 @@ export function QuoteComparison({ harperAssisted = false }: QuoteComparisonProps
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSelect(idx)}
                 disabled={completed}
+                data-testid={`quote-card-${idx}`}
                 className={`text-left p-4 rounded-xl border-2 transition-all cursor-pointer relative
                   ${isSelected
-                    ? 'border-harper-coral bg-harper-coral/5 ring-1 ring-harper-coral/30'
+                    ? 'border-gold bg-gold/5 ring-1 ring-gold/30'
                     : isRecommended
-                      ? 'border-harper-green bg-harper-green/5 ring-1 ring-harper-green/30'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'border-emerald bg-emerald/5 ring-1 ring-emerald/30'
+                      : 'border-slate-600/30 bg-slate-800/50 hover:border-slate-500'
                   }
                 `}
               >
                 {isRecommended && (
-                  <span className="absolute -top-2 right-2 text-[10px] bg-harper-green text-white px-2 py-0.5 rounded-full font-medium">
+                  <span className="absolute -top-2 right-2 text-[10px] bg-emerald text-white px-2 py-0.5 rounded-full font-medium">
                     Best Match
                   </span>
                 )}
 
-                <p className="font-semibold text-harper-teal text-sm">{quote.carrier}</p>
+                <p className="font-semibold text-pearl text-sm">{quote.carrier}</p>
 
                 <div className="mt-3 space-y-2">
                   <div>
-                    <span className="text-[10px] text-harper-muted uppercase">Premium</span>
-                    <p className={`text-sm font-mono font-medium ${harperAssisted ? 'text-harper-teal' : 'text-harper-teal'}`}>
+                    <span className="text-[10px] text-mist uppercase">Premium</span>
+                    <p className="text-sm font-mono font-medium text-pearl">
                       {harperAssisted
                         ? `$${quote.premiumAnnual.toLocaleString()}/yr`
                         : quote.premium
@@ -124,12 +125,12 @@ export function QuoteComparison({ harperAssisted = false }: QuoteComparisonProps
                     </p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-harper-muted uppercase">Deductible</span>
-                    <p className="text-sm font-mono text-harper-teal">{quote.deductible}</p>
+                    <span className="text-[10px] text-mist uppercase">Deductible</span>
+                    <p className="text-sm font-mono text-pearl">{quote.deductible}</p>
                   </div>
                   <div>
-                    <span className="text-[10px] text-harper-muted uppercase">Limit</span>
-                    <p className="text-sm font-mono text-harper-teal">{quote.coverageLimit}</p>
+                    <span className="text-[10px] text-mist uppercase">Limit</span>
+                    <p className="text-sm font-mono text-pearl">{quote.coverageLimit}</p>
                   </div>
                 </div>
               </motion.button>
@@ -142,10 +143,11 @@ export function QuoteComparison({ harperAssisted = false }: QuoteComparisonProps
           whileTap={selected !== null ? { scale: 0.98 } : {}}
           onClick={handleConfirm}
           disabled={selected === null || completed}
+          data-testid="quote-confirm"
           className={`mt-4 w-full py-2.5 rounded-full font-semibold text-sm transition-all cursor-pointer
             ${selected !== null && !completed
-              ? 'bg-harper-teal text-harper-beige hover:bg-harper-teal-mid'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              ? 'bg-gradient-to-br from-gold via-gold-bright to-gold-dim text-midnight hover:shadow-lg'
+              : 'bg-slate-700 text-mist/50 cursor-not-allowed'
             }
           `}
         >
