@@ -88,12 +88,32 @@ export function EndOfDay() {
   ]
 
   return (
-    <div className="min-h-screen noise-bg flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen noise-bg scan-line-effect flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Enhanced ambient background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.15, 0.1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gold rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.08, 0.12, 0.08],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-emerald rounded-full blur-3xl"
+        />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="max-w-2xl w-full"
+        className="max-w-2xl w-full relative z-10"
       >
         {/* Header */}
         <motion.div

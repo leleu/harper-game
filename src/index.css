@@ -22,9 +22,9 @@
   --color-pearl-dim: #E2E8F0;
   --color-mist: #94A3B8;
 
-  --font-sans: 'Archivo', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 }
 
 * {
@@ -40,6 +40,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='5' fill='%23D4AF37' opacity='0.4'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%23F8FAFC' opacity='0.9'/%3E%3C/svg%3E") 12 12, auto;
 }
 
 #root {
@@ -201,4 +202,87 @@ body::before {
     rgba(212, 175, 55, 0.6) 0%,
     rgba(244, 208, 63, 0.7) 50%,
     rgba(212, 175, 55, 0.6) 100%);
+}
+
+/* Scan line effect overlay - subtle CRT monitor aesthetic */
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+.scan-line-effect::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(212, 175, 55, 0.02) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 9999;
+  animation: scan-line 8s linear infinite;
+  opacity: 0.3;
+}
+
+/* Depth layers with parallax-ready classes */
+.layer-back { transform: translateZ(-10px) scale(1.1); }
+.layer-mid { transform: translateZ(-5px) scale(1.05); }
+.layer-front { transform: translateZ(0); }
+
+/* Enhanced button hover states */
+button, a {
+  cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='6' fill='%23D4AF37' opacity='0.6'/%3E%3Ccircle cx='12' cy='12' r='3' fill='%23F4D03F' opacity='1'/%3E%3C/svg%3E") 12 12, pointer;
+}
+
+/* Frosted glass dividers */
+.glass-divider {
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.2) 10%,
+    rgba(212, 175, 55, 0.4) 50%,
+    rgba(212, 175, 55, 0.2) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.15);
+}
+
+/* Glow text effect */
+.text-glow {
+  text-shadow:
+    0 0 10px currentColor,
+    0 0 20px rgba(212, 175, 55, 0.5),
+    0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+/* Premium card interaction */
+.premium-card {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.premium-card:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(212, 175, 55, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(212, 175, 55, 0.05) 0%,
+    rgba(244, 208, 63, 0.15) 50%,
+    rgba(212, 175, 55, 0.05) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
 }

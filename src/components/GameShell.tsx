@@ -1,4 +1,5 @@
 import { useEffect, useRef, useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import { TopBar } from './TopBar'
 import { TaskQueue } from './TaskQueue'
 import { Workspace } from './Workspace'
@@ -155,9 +156,30 @@ export function GameShell() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-midnight relative">
+    <div className="h-screen flex flex-col bg-midnight relative scan-line-effect">
       <TopBar />
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Depth-enhanced ambient background */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <motion.div
+            animate={{
+              x: ['-5%', '5%', '-5%'],
+              y: ['-3%', '3%', '-3%'],
+              opacity: [0.02, 0.04, 0.02],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute top-0 left-1/4 w-96 h-96 bg-gold rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              x: ['5%', '-5%', '5%'],
+              opacity: [0.015, 0.03, 0.015],
+            }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute bottom-0 right-1/4 w-80 h-80 bg-emerald rounded-full blur-3xl"
+          />
+        </div>
+
         <TaskQueue />
         <div className="flex-1 relative">
           <Workspace />
